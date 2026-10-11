@@ -486,6 +486,10 @@ Read a CVar with `GetValueOnGameThread()`, `GetValueOnRenderThread()` or `GetVal
 
 **Skipping `Super::StartTest()`:** `AFunctionalTest::StartTest` fires the Blueprint `ReceiveStartTest` event, so omitting `Super::` silently disables every Blueprint-authored step in the same test actor.
 
+## Editor MCP blockouts
+
+For primitive-only level edits, capture argument pitfalls, collision probes and non-destructive saved-map verification, see [references/mcp-blockout-verification.md](references/mcp-blockout-verification.md).
+
 ## Related Skills
 
 - `ue-cpp-foundations` — UObject basics, delegates, containers, the UFUNCTION/UPROPERTY specifier tables
