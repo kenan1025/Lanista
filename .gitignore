@@ -1,14 +1,30 @@
-Binaries
-DerivedDataCache
-Intermediate
-Saved
-.vscode
-.vs
+# Unreal-generated outputs (including plugin outputs)
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Generated IDE projects and local editor state
+.vscode/
+.vs/
+.idea/
+/.vsconfig
 *.VC.db
+*.VC.VC.opendb
 *.opensdf
 *.opendb
 *.sdf
 *.sln
+*.slnx
 *.suo
-*.xcodeproj
-*.xcworkspace
+*.xcodeproj/
+*.xcworkspace/
+
+# Local user configuration and OS metadata
+/Config/User*.ini
+.DS_Store
+Thumbs.db
+
+# Keep Content, Config defaults, Source, Build resources and .uproject tracked.
+# In particular, __ExternalActors__ and __ExternalObjects__ are level data,
+# not caches: do not ignore them for levels that remain in the project.
