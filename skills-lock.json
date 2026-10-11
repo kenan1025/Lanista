@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skills": {
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
+    },
+    "ponytail": {
+      "source": "dietrichgebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "dc44b17f49b1228761af8303a51bc028cd1cca866ba8d23d6072ef5fd4e0ba94"
+    },
+    "ue-actor-component-architecture": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-actor-component-architecture/SKILL.md",
+      "computedHash": "9f98d0be115538b5d2166a192579b01fb86902eacd1ea66e03e71938ebee5268"
+    },
+    "ue-blueprint-cpp-interop": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-blueprint-cpp-interop/SKILL.md",
+      "computedHash": "ced3c5c02714c70777696581cbfa1e2d6f5291452d9d737a3a803bc4939a71f8"
+    },
+    "ue-cpp-foundations": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-cpp-foundations/SKILL.md",
+      "computedHash": "72fc0b97232280220dc79c5458907166fb710bd780633892de44234d4f1c568c"
+    },
+    "ue-gameplay-framework": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-gameplay-framework/SKILL.md",
+      "computedHash": "c5fddfc2c564c0176ebf6fc68c2b5987174a6de12d04d5e82652d9f92684fec8"
+    },
+    "ue-project-context": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-project-context/SKILL.md",
+      "computedHash": "855727089df532da96a73b53a4b3050720faad013efa61116177d595276918e3"
+    },
+    "ue-testing-debugging": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-testing-debugging/SKILL.md",
+      "computedHash": "bc9886f5d760fe2987993705a42617297e19d46d078129778363cf2deeb162ba"
+    },
+    "ue-ui-umg-slate": {
+      "source": "quodsoler/unreal-engine-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ue-ui-umg-slate/SKILL.md",
+      "computedHash": "b2559b7647ffc15d8796d3702594e99f7c035fc75792f348261b7d9028b0ced0"
+    }
+  }
+}
