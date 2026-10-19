@@ -72,11 +72,8 @@ public:
 protected:
 
 	void HandleRecoveryStateChanged(bool bRecovering);
-	/** Handler for starting the crouch */
-	void StartCrouch(const FInputActionValue& Value);
- 
-	/** Handler for stopping the crouch */
-	void StopCrouch(const FInputActionValue& Value);
+	/** Toggles crouch on each press. */
+	void ToggleCrouch(const FInputActionValue& Value);
 
 	/** Called from Input Actions for movement input */
 	void MoveInput(const FInputActionValue& Value);
@@ -131,6 +128,8 @@ public:
 	/** Walk speed while recovering stamina */
 	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 300, Units = "cm/s"))
 	float RecoveringWalkSpeed = 150.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crouch")
+	bool IsCrouched;
 	
 	
 	
@@ -151,6 +150,7 @@ public:
 
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	
 
 };
 

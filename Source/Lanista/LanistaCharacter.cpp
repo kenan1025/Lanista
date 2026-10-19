@@ -85,16 +85,16 @@ void ALanistaCharacter::HandleRecoveryStateChanged(bool bRecovering)
 	}
 }
 
-void ALanistaCharacter::StartCrouch(const FInputActionValue& Value)
+void ALanistaCharacter::ToggleCrouch(const FInputActionValue& Value)
 {
-	// Native ACharacter function to resize capsule and slow movement
-	Crouch();
-}
-
-void ALanistaCharacter::StopCrouch(const FInputActionValue& Value)
-{
-	// Native ACharacter function to restore capsule and speed
-	UnCrouch();
+	if (GetCharacterMovement()->bWantsToCrouch)
+	{
+		UnCrouch();
+	}
+	else if (!GetCharacterMovement()->IsFalling())
+	{
+		Crouch();
+	}
 }
 
 
@@ -119,11 +119,7 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		                                   &ALanistaCharacter::DoSprintStart);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
 		                                   &ALanistaCharacter::DoSprintEnd);
-		// Bind Started for pressing the key
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALanistaCharacter::StartCrouch);
-            
-		// Bind Completed for releasing the key (Hold to Crouch)
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ALanistaCharacter::StopCrouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALanistaCharacter::ToggleCrouch);
 	}
 	else
 	{

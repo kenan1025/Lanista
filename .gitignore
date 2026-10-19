@@ -28,3 +28,13 @@ Thumbs.db
 # Keep Content, Config defaults, Source, Build resources and .uproject tracked.
 # In particular, __ExternalActors__ and __ExternalObjects__ are level data,
 # not caches: do not ignore them for levels that remain in the project.
+
+# Unused migrated assets; retain retargeted crouch animations and their dependencies.
+/Content/Characters/UEFN_Mannequin/
+/Content/Migration/
+
+# Imported Foley audio is unused after removing crouch sound notifies.
+/Content/Audio/
+/Content/Blueprints/AnimNotifies/
+# Local tag configuration created only for the now-unused Foley audio.
+/Config/DefaultGameplayTags.ini
