@@ -7,6 +7,7 @@
 #include "StaminaComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateStaminaMeterDelegate, float, Percentage);
+DECLARE_MULTICAST_DELEGATE_OneParam(FRecoveryStateChangedDelegate, bool);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStaminaStateChangedDelegate, bool, bSprinting);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LANISTA_API UStaminaComponent : public UActorComponent
@@ -29,6 +30,7 @@ public:
 	
 	/** If true, we're recovering stamina */
 	bool bRecovering = false;
+	FRecoveryStateChangedDelegate OnRecoveryStateChanged;
 	bool bSprinting;
 	UPROPERTY(EditAnywhere)
 	float MaxStamina = 100.0f;
@@ -39,8 +41,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float StaminaRegen = 10.0f;
 	
-	UFUNCTION()
-	void OnSprintChanged(bool bIsSprinting);
+	
 	
 	
 	

@@ -67,6 +67,8 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 protected:
 
+	void HandleRecoveryStateChanged(bool bRecovering);
+
 	/** Called from Input Actions for movement input */
 	void MoveInput(const FInputActionValue& Value);
 
@@ -114,10 +116,10 @@ public:
 	float SprintStaminaDrain = 10.0f;
 	UPROPERTY(EditAnywhere, Category="Jump")
 	float JumpStaminaDrain = 10.0f;
-	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
+	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, Units = "cm/s"))
 	float SprintSpeed = 600.0f;
 	/** Walk speed while recovering stamina */
-	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
+	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 300, Units = "cm/s"))
 	float RecoveringWalkSpeed = 150.0f;
 	
 	

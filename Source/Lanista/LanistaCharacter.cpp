@@ -52,6 +52,11 @@ void ALanistaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	if (StaminaComponent)
+	{
+		StaminaComponent->OnRecoveryStateChanged.AddUObject(this, &ALanistaCharacter::HandleRecoveryStateChanged);
+		HandleRecoveryStateChanged(StaminaComponent->bRecovering);
+	}
 }
 
 void ALanistaCharacter::Tick(float DeltaTime)
@@ -62,10 +67,11 @@ void ALanistaCharacter::Tick(float DeltaTime)
 	{
 		StaminaComponent->DrainStamina(SprintStaminaDrain * DeltaTime);
 	}
-	if (StaminaComponent->bRecovering)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = RecoveringWalkSpeed;
-	}
+}
+
+void ALanistaCharacter::HandleRecoveryStateChanged(bool bRecovering)
+{
+	GetCharacterMovement()->MaxWalkSpeed = bRecovering ? RecoveringWalkSpeed : (bSprinting ? SprintSpeed : WalkSpeed);
 }
 
 

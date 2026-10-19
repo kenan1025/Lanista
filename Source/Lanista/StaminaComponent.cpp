@@ -55,6 +55,7 @@ void UStaminaComponent::UpdateStamina(float DeltaTime)
 		{
 			// raise the recovering flag
 			bRecovering = true;
+			OnRecoveryStateChanged.Broadcast(true);
 		}
 	}
 	else
@@ -67,6 +68,7 @@ void UStaminaComponent::UpdateStamina(float DeltaTime)
 		{
 			// lower the recovering flag
 			bRecovering = false;
+			OnRecoveryStateChanged.Broadcast(false);
 		}
 	}
 
