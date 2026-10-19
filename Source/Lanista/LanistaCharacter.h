@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "StaminaComponent.h"
+#include "InputActionValue.h"
 #include "LanistaCharacter.generated.h"
 
 class UInputComponent;
@@ -47,6 +48,9 @@ protected:
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* MoveAction;
+	/** Crouch Input Action - Assign in Blueprint Details */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Actions")
+	UInputAction* CrouchAction;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
@@ -68,6 +72,11 @@ public:
 protected:
 
 	void HandleRecoveryStateChanged(bool bRecovering);
+	/** Handler for starting the crouch */
+	void StartCrouch(const FInputActionValue& Value);
+ 
+	/** Handler for stopping the crouch */
+	void StopCrouch(const FInputActionValue& Value);
 
 	/** Called from Input Actions for movement input */
 	void MoveInput(const FInputActionValue& Value);
@@ -90,13 +99,14 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-	/** Handles jump start inputs from either controls or UI interfaces */
+	/** Handles Sprint start inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintStart();
 
-	/** Handles jump end inputs from either controls or UI interfaces */
+	/** Handles Sprint end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintEnd();
+	
 	
 	
 

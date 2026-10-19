@@ -46,11 +46,14 @@ ALanistaCharacter::ALanistaCharacter()
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
 	
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	
 }
 
 void ALanistaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	if (StaminaComponent)
 	{
@@ -71,7 +74,27 @@ void ALanistaCharacter::Tick(float DeltaTime)
 
 void ALanistaCharacter::HandleRecoveryStateChanged(bool bRecovering)
 {
-	GetCharacterMovement()->MaxWalkSpeed = bRecovering ? RecoveringWalkSpeed : (bSprinting ? SprintSpeed : WalkSpeed);
+	// Check for crouch state first to avoid speed bursts while low
+	if (bIsCrouched)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeedCrouched;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = bRecovering ? RecoveringWalkSpeed : (bSprinting ? SprintSpeed : WalkSpeed);
+	}
+}
+
+void ALanistaCharacter::StartCrouch(const FInputActionValue& Value)
+{
+	// Native ACharacter function to resize capsule and slow movement
+	Crouch();
+}
+
+void ALanistaCharacter::StopCrouch(const FInputActionValue& Value)
+{
+	// Native ACharacter function to restore capsule and speed
+	UnCrouch();
 }
 
 
@@ -96,6 +119,11 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		                                   &ALanistaCharacter::DoSprintStart);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
 		                                   &ALanistaCharacter::DoSprintEnd);
+		// Bind Started for pressing the key
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALanistaCharacter::StartCrouch);
+            
+		// Bind Completed for releasing the key (Hold to Crouch)
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ALanistaCharacter::StopCrouch);
 	}
 	else
 	{
@@ -163,6 +191,10 @@ void ALanistaCharacter::DoJumpEnd()
 
 void ALanistaCharacter::Sprint()
 {
+	if(bIsCrouched)
+	{
+		return;
+	}
 	//set the sprinting flag
 	bSprinting = true;
 	//are we out of recoverymode?
@@ -198,3 +230,5 @@ void ALanistaCharacter::DoSprintEnd()
 {
 	StopSprint();
 }
+
+
