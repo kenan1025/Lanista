@@ -30,12 +30,18 @@ class ALanistaCharacter : public ACharacter
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+	
+	
+	
 
 protected:
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* JumpAction;
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* SprintAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
@@ -75,6 +81,13 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+	/** Handles jump start inputs from either controls or UI interfaces */
+	UFUNCTION(BlueprintCallable, Category="Input")
+	virtual void DoSprintStart();
+
+	/** Handles jump end inputs from either controls or UI interfaces */
+	UFUNCTION(BlueprintCallable, Category="Input")
+	virtual void DoSprintEnd();
 
 protected:
 
@@ -83,6 +96,7 @@ protected:
 	
 
 public:
+	UStaminaComponent* StaminaComponent;
 
 	/** Returns the first person mesh **/
 	USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }

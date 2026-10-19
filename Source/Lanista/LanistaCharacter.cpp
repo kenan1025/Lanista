@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Lanista.h"
+#include "StaminaComponent.h"
 
 ALanistaCharacter::ALanistaCharacter()
 {
@@ -59,6 +60,9 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALanistaCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ALanistaCharacter::LookInput);
+		// Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Ongoing, this, &ALanistaCharacter::DoSprintStart);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ALanistaCharacter::DoSprintEnd);
 	}
 	else
 	{
@@ -117,4 +121,14 @@ void ALanistaCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void ALanistaCharacter::DoSprintStart()
+{
+	StaminaComponent->DoStartSprint();
+}
+
+void ALanistaCharacter::DoSprintEnd()
+{
+	StaminaComponent->DoEndSprint();
 }
