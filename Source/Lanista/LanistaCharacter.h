@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "StaminaComponent.h"
 #include "LanistaCharacter.generated.h"
 
 class UInputComponent;
@@ -14,7 +15,7 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStaminaStateChangedDelegate, bool, bSprinting);
 /**
  *  A basic first person character
  */
@@ -56,8 +57,14 @@ protected:
 	class UInputAction* MouseLookAction;
 	
 public:
+	
 	ALanistaCharacter();
-
+	// Called when the game starts
+	virtual void BeginPlay() override;
+	
+	virtual void Tick(float DeltaTime) override;
+	/** Set up input action bindings */
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 protected:
 
 	/** Called from Input Actions for movement input */
@@ -88,16 +95,45 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintEnd();
+	
+	
 
-protected:
-
-	/** Set up input action bindings */
-	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+	
 	
 
 public:
+	UPROPERTY(EditAnywhere)
 	UStaminaComponent* StaminaComponent;
+	UPROPERTY(EditAnywhere)
+	float WalkSpeed = 300.0f;
+	/** If true, we're sprinting */
+	bool bSprinting = false;
+	
+	
+	UPROPERTY(EditAnywhere, Category="Sprint")
+	float SprintStaminaDrain = 10.0f;
+	UPROPERTY(EditAnywhere, Category="Jump")
+	float JumpStaminaDrain = 10.0f;
+	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
+	float SprintSpeed = 600.0f;
+	/** Walk speed while recovering stamina */
+	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
+	float RecoveringWalkSpeed = 150.0f;
+	
+	
+	
+	
+	FStaminaStateChangedDelegate OnSprintStateChanged;
+	
+	/** Starts sprinting behavior */
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void Sprint();
 
+	/** Stops sprinting behavior */
+	UFUNCTION(BlueprintCallable, Category="Input")
+	void StopSprint();
+
+	
 	/** Returns the first person mesh **/
 	USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }
 

@@ -25,8 +25,6 @@ public class Lanista : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"Lanista",
-			"Lanista/Variant_Horror",
-			"Lanista/Variant_Horror/UI",
 			"Lanista/Variant_Shooter",
 			"Lanista/Variant_Shooter/AI",
 			"Lanista/Variant_Shooter/UI",
