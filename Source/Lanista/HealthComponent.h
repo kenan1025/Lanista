@@ -23,6 +23,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	//Max health of character
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Health")
+	float MaxHealth = 100.0f;
+	//Health of character
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Health")
+	float Health;
+	
 };

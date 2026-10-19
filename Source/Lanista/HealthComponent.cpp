@@ -18,6 +18,8 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	Health = MaxHealth;
+	UE_LOG(LogTemp,Warning,TEXT("Max health is %f and health is %f"),MaxHealth,Health);
 
 	// ...
 	
