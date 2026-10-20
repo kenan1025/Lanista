@@ -111,7 +111,7 @@ protected:
 	
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaminaComponent* StaminaComponent;
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 300.0f;

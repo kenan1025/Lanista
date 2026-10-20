@@ -47,6 +47,7 @@ ALanistaCharacter::ALanistaCharacter()
 	GetCharacterMovement()->AirControl = 0.5f;
 	
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
 	
 }
 
