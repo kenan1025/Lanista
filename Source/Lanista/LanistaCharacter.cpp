@@ -7,6 +7,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "InventoryComponent.h"
+#include "ItemDefinition.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Lanista.h"
 
@@ -48,6 +50,8 @@ ALanistaCharacter::ALanistaCharacter()
 	
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	
 }
 
@@ -236,7 +240,46 @@ void ALanistaCharacter::DoInteract()
 
 void ALanistaCharacter::Interact()
 {
-	GetWorld()->SweepSingleByChannel();
+	//GetWorld()->SweepSingleByChannel();
+	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractDistance);
+	DrawDebugLine(GetWorld(),Start,End,FColor::Red, false, 5.0f);
+	FCollisionShape InteractionSphere = FCollisionShape::MakeSphere(30.0f);
+	DrawDebugSphere(GetWorld(), Start,30.0f, 20,FColor::Green,false,5.0f);
+	DrawDebugSphere(GetWorld(), End,30.0f, 20,FColor::Red,false,5.0f);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(
+		HitResult, 
+		Start, End, 
+		FQuat::Identity, 
+		ECC_Visibility, 
+		InteractionSphere,
+		QueryParams
+	);
+	
+	if (HasHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UE_LOG(LogTemp, Warning, TEXT("Item name is %s"),*HitActor->GetActorNameOrLabel());
+		WorldItem = Cast<AWorldItem>(HitActor);
+		if (WorldItem)
+		{
+			
+				InventoryComponent->AddItem(WorldItem->ItemData,WorldItem->Quantity);
+	
+				WorldItem->Destroy();
+			UE_LOG(LogTemp, Warning, TEXT("Item added"));
+	
+		}
+		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("No actor hit!"));
+	}
+
 }
 
 

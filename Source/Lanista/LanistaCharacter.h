@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HealthComponent.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "StaminaComponent.h"
 #include "InputActionValue.h"
+#include "InventoryComponent.h"
+#include "WorldItem.h"
 #include "LanistaCharacter.generated.h"
 
 class UInputComponent;
@@ -113,6 +116,9 @@ protected:
 	
 	void Interact();
 	
+	UPROPERTY(EditAnywhere)
+	float MaxInteractDistance = 300.0f;
+	
 	
 	
 
@@ -122,6 +128,12 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaminaComponent* StaminaComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UInventoryComponent* InventoryComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere)
+	AWorldItem* WorldItem;
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 300.0f;
 	/** If true, we're sprinting */
