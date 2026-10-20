@@ -121,6 +121,7 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
 		                                   &ALanistaCharacter::DoSprintEnd);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALanistaCharacter::ToggleCrouch);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ALanistaCharacter::DoInteract);
 	}
 	else
 	{
@@ -226,6 +227,16 @@ void ALanistaCharacter::DoSprintStart()
 void ALanistaCharacter::DoSprintEnd()
 {
 	StopSprint();
+}
+
+void ALanistaCharacter::DoInteract()
+{
+	Interact();
+}
+
+void ALanistaCharacter::Interact()
+{
+	GetWorld()->SweepSingleByChannel();
 }
 
 

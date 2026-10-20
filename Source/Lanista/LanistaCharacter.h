@@ -51,6 +51,8 @@ protected:
 	/** Crouch Input Action - Assign in Blueprint Details */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Actions")
 	UInputAction* CrouchAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Actions")
+	UInputAction* InteractAction;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
@@ -73,6 +75,7 @@ protected:
 
 	void HandleRecoveryStateChanged(bool bRecovering);
 	/** Toggles crouch on each press. */
+	UFUNCTION(BlueprintCallable, Category="Input")
 	void ToggleCrouch(const FInputActionValue& Value);
 
 	/** Called from Input Actions for movement input */
@@ -103,6 +106,12 @@ protected:
 	/** Handles Sprint end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintEnd();
+	
+	/** Handles Sprint end inputs from either controls or UI interfaces */
+	UFUNCTION(BlueprintCallable, Category="Input")
+	virtual void DoInteract();
+	
+	void Interact();
 	
 	
 	
