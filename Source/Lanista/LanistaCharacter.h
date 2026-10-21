@@ -3,13 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HealthComponent.h"
+
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "StaminaComponent.h"
+
 #include "InputActionValue.h"
-#include "InventoryComponent.h"
-#include "WorldItem.h"
+#include "Components/HealthComponent.h"
+#include "Components/InventoryComponent.h"
+#include "Components/StaminaComponent.h"
+#include "Items/WorldItem.h"
+
 #include "LanistaCharacter.generated.h"
 
 class UInputComponent;
@@ -134,10 +137,17 @@ public:
 	UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleAnywhere)
 	AWorldItem* WorldItem;
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	void EquipItem(UItemDefinition* NewItem);
+ 
+	// References to the components you added in the Blueprint
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	TObjectPtr<USkeletalMeshComponent> ChestArmorComponent;
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 300.0f;
 	/** If true, we're sprinting */
 	bool bSprinting = false;
+	
 	
 	
 	UPROPERTY(EditAnywhere, Category="Sprint")

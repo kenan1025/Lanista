@@ -36,5 +36,11 @@ Thumbs.db
 # Imported Foley audio is unused after removing crouch sound notifies.
 /Content/Audio/
 /Content/Blueprints/AnimNotifies/
-# Local tag configuration created only for the now-unused Foley audio.
-/Config/DefaultGameplayTags.ini
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent.uasset
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent_Run_L.uasset
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent_Run_R.uasset
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent_Scuff_L.uasset
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent_Walk_L.uasset
+/Content/Blueprints/AnimNotifies/BP_AnimNotify_FoleyEvent_Walk_R.uasset
+/Content/Blueprints/AnimNotifies/E_FoleyEventSide.uasset
+
