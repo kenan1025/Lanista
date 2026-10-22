@@ -143,6 +143,12 @@ public:
 	// References to the components you added in the Blueprint
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
 	TObjectPtr<USkeletalMeshComponent> ChestArmorComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	TObjectPtr<USkeletalMeshComponent> HelmetArmorComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	TObjectPtr<USkeletalMeshComponent> PantsArmorComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	TObjectPtr<USkeletalMeshComponent> BootsArmorComponent;
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 300.0f;
 	/** If true, we're sprinting */

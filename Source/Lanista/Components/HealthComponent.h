@@ -34,6 +34,8 @@ public:
 	float K=100.0f;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Health")
 	bool bIsAlive = true;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Armor")
+	float MaxArmor= 0.0f;
 	UPROPERTY(BlueprintAssignable,Category="Health")
 	FSHealthStateChangedDelegate OnHealthChanged;
 	UPROPERTY(BlueprintAssignable,Category="Health")

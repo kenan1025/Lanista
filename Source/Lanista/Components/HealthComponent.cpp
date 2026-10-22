@@ -20,8 +20,9 @@ void UHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	Health = MaxHealth;
 	UE_LOG(LogTemp,Warning,TEXT("Max health is %f and health is %f"),MaxHealth,Health);
+	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::OnDamageTaken);
 
-	// ...
+	
 	
 }
 
@@ -40,9 +41,10 @@ void UHealthComponent::OnDamageTaken(AActor* DamagedActor, float Damage, const c
 	if (bIsAlive)
 	{
 		
-		float Armor = 50.0f;
-		float DamageTaken = Damage * (K/(K+Armor));
-		Health = FMath::Clamp(Health - DamageTaken, 0.0f, 100.0f);
+		
+		float DamageTaken = Damage * (K/(K+MaxArmor));
+		Health = FMath::Clamp(Health - DamageTaken, 0.0f, MaxHealth);
+		UE_LOG(LogTemp,Warning,TEXT("Health is %f"),Health);
 		OnHealthUpdated.Broadcast(Health/MaxHealth);
 		if (Health <=0.0f)
 		{

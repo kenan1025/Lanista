@@ -7,7 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
-
+#include "Items/Fragments/ArmorStatsFragment.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Lanista.h"
 
@@ -75,6 +75,29 @@ void ALanistaCharacter::BeginPlay()
 			break;
 		}
 	}
+	for (USkeletalMeshComponent* Comp : Components)
+	{
+		if (Comp->GetName() == TEXT("HelmetMesh"))
+		{
+			HelmetArmorComponent = Comp;
+			break;
+		}
+	}for (USkeletalMeshComponent* Comp : Components)
+	{
+		if (Comp->GetName() == TEXT("PantsMesh"))
+		{
+			PantsArmorComponent = Comp;
+			break;
+		}
+	}for (USkeletalMeshComponent* Comp : Components)
+	{
+		if (Comp->GetName() == TEXT("BootsMesh"))
+		{
+			BootsArmorComponent = Comp;
+			break;
+		}
+	}
+	
 }
 
 void ALanistaCharacter::Tick(float DeltaTime)
@@ -254,6 +277,8 @@ void ALanistaCharacter::DoInteract()
 
 void ALanistaCharacter::Interact()
 {
+			F	bool result = false;
+	
 	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
 	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractDistance);
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.0f);
@@ -279,14 +304,24 @@ void ALanistaCharacter::Interact()
 		WorldItem = Cast<AWorldItem>(HitActor);
 		if (WorldItem)
 		{
-			bool result = false;
-			result = InventoryComponent->AddItem(WorldItem->ItemData, WorldItem->Quantity);
-			if (result)
+			if (WorldItem->ActorHasTag(TEXT("Chest")) || 
+	WorldItem->ActorHasTag(TEXT("Head"))  || 
+	WorldItem->ActorHasTag(TEXT("Legs"))  || 
+	WorldItem->ActorHasTag(TEXT("Feet")))
 			{
-				WorldItem->Destroy();
-			}
+				EquipItem(WorldItem->ItemData);
+			}else
+			{
+				result = InventoryComponent->AddItem(WorldItem->ItemData, WorldItem->Quantity);
+				if (result)
+				{
+					WorldItem->Destroy();
+				}
 
-			UE_LOG(LogTemp, Warning, TEXT("Item added"));
+				UE_LOG(LogTemp, Warning, TEXT("Item added"));
+			}
+			
+			
 		}
 	}
 	else
@@ -302,6 +337,9 @@ void ALanistaCharacter::EquipItem(UItemDefinition* NewItem)
 	// 1. Get the specific component for this slot
 	USkeletalMeshComponent* TargetComponent = nullptr;
 	if (NewItem->Slot == EEquipmentSlot::Chest) TargetComponent = ChestArmorComponent;
+	if (NewItem->Slot == EEquipmentSlot::Head) TargetComponent = HelmetArmorComponent;
+	if (NewItem->Slot == EEquipmentSlot::Legs) TargetComponent = PantsArmorComponent;
+	if (NewItem->Slot == EEquipmentSlot::Feet) TargetComponent = BootsArmorComponent;
 
 	if (TargetComponent)
 	{
@@ -312,5 +350,13 @@ void ALanistaCharacter::EquipItem(UItemDefinition* NewItem)
 		// 3. THE MAGIC STEP: Sync animations with the body
 		// This makes the chestplate move with the character's breathing/running
 		TargetComponent->SetLeaderPoseComponent(GetMesh());
+		for (const UItemFragment* Fragment : NewItem->Fragments)
+		{
+			if (const UArmorStatsFragment* ArmorFragment = Cast<UArmorStatsFragment>(Fragment))
+			{
+				HealthComponent->MaxArmor += ArmorFragment->BaseArmor;
+				break;
+			}
+		}
 	}
 }

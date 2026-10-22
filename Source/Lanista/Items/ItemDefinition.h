@@ -18,7 +18,8 @@
      None,
      Head,
      Chest,
-     Legs
+     Legs,
+ 	 Feet
  };
 UCLASS(BlueprintType, Blueprintable)
 class LANISTA_API UItemDefinition : public UPrimaryDataAsset
