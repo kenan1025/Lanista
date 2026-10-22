@@ -6,7 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSHealthStateChangedDelegate, bool, bIsAlive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSHealthUpdatedDelegate, float, Percentage);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LANISTA_API UHealthComponent : public UActorComponent
 {
@@ -29,5 +30,16 @@ public:
 	//Health of character
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Health")
 	float Health;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Health")
+	float K=100.0f;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Health")
+	bool bIsAlive = true;
+	UPROPERTY(BlueprintAssignable,Category="Health")
+	FSHealthStateChangedDelegate OnHealthChanged;
+	UPROPERTY(BlueprintAssignable,Category="Health")
+	FSHealthUpdatedDelegate OnHealthUpdated;
+	
+	UFUNCTION()
+	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
 };

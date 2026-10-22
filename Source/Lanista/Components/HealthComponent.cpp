@@ -34,3 +34,21 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
+void UHealthComponent::OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
+	class AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (bIsAlive)
+	{
+		
+		float Armor = 50.0f;
+		float DamageTaken = Damage * (K/(K+Armor));
+		Health = FMath::Clamp(Health - DamageTaken, 0.0f, 100.0f);
+		OnHealthUpdated.Broadcast(Health/MaxHealth);
+		if (Health <=0.0f)
+		{
+			bIsAlive = false;
+			OnHealthChanged.Broadcast(bIsAlive);
+		}
+	}
+}
+

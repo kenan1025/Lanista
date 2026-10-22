@@ -46,18 +46,17 @@ ALanistaCharacter::ALanistaCharacter()
 	// Configure character movement
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
-	
+
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	
 }
 
 void ALanistaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	if (StaminaComponent)
 	{
@@ -67,7 +66,7 @@ void ALanistaCharacter::BeginPlay()
 	// This searches the Blueprint components for one named "ChestMesh"
 	TArray<USkeletalMeshComponent*> Components;
 	GetComponents<USkeletalMeshComponent>(Components);
- 
+
 	for (USkeletalMeshComponent* Comp : Components)
 	{
 		if (Comp->GetName() == TEXT("ChestMesh"))
@@ -81,7 +80,7 @@ void ALanistaCharacter::BeginPlay()
 void ALanistaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	if (bSprinting && !StaminaComponent->bRecovering)
 	{
 		StaminaComponent->DrainStamina(SprintStaminaDrain * DeltaTime);
@@ -97,7 +96,9 @@ void ALanistaCharacter::HandleRecoveryStateChanged(bool bRecovering)
 	}
 	else
 	{
-		GetCharacterMovement()->MaxWalkSpeed = bRecovering ? RecoveringWalkSpeed : (bSprinting ? SprintSpeed : WalkSpeed);
+		GetCharacterMovement()->MaxWalkSpeed = bRecovering
+			                                       ? RecoveringWalkSpeed
+			                                       : (bSprinting ? SprintSpeed : WalkSpeed);
 	}
 }
 
@@ -135,8 +136,10 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		                                   &ALanistaCharacter::DoSprintStart);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
 		                                   &ALanistaCharacter::DoSprintEnd);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALanistaCharacter::ToggleCrouch);
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ALanistaCharacter::DoInteract);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this,
+		                                   &ALanistaCharacter::ToggleCrouch);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this,
+		                                   &ALanistaCharacter::DoInteract);
 	}
 	else
 	{
@@ -204,7 +207,7 @@ void ALanistaCharacter::DoJumpEnd()
 
 void ALanistaCharacter::Sprint()
 {
-	if(bIsCrouched)
+	if (bIsCrouched)
 	{
 		return;
 	}
@@ -251,73 +254,63 @@ void ALanistaCharacter::DoInteract()
 
 void ALanistaCharacter::Interact()
 {
-	//GetWorld()->SweepSingleByChannel();
 	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
 	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractDistance);
-	DrawDebugLine(GetWorld(),Start,End,FColor::Red, false, 5.0f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.0f);
 	FCollisionShape InteractionSphere = FCollisionShape::MakeSphere(30.0f);
-	DrawDebugSphere(GetWorld(), Start,30.0f, 20,FColor::Green,false,5.0f);
-	DrawDebugSphere(GetWorld(), End,30.0f, 20,FColor::Red,false,5.0f);
+	DrawDebugSphere(GetWorld(), Start, 30.0f, 20, FColor::Green, false, 5.0f);
+	DrawDebugSphere(GetWorld(), End, 30.0f, 20, FColor::Red, false, 5.0f);
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	FHitResult HitResult;
 	bool HasHit = GetWorld()->SweepSingleByChannel(
-		HitResult, 
-		Start, End, 
-		FQuat::Identity, 
-		ECC_Visibility, 
+		HitResult,
+		Start, End,
+		FQuat::Identity,
+		ECC_Visibility,
 		InteractionSphere,
 		QueryParams
 	);
-	
+
 	if (HasHit)
 	{
 		AActor* HitActor = HitResult.GetActor();
-		UE_LOG(LogTemp, Warning, TEXT("Item name is %s"),*HitActor->GetActorNameOrLabel());
+		UE_LOG(LogTemp, Warning, TEXT("Item name is %s"), *HitActor->GetActorNameOrLabel());
 		WorldItem = Cast<AWorldItem>(HitActor);
 		if (WorldItem)
 		{
-			if (WorldItem->ActorHasTag("Chest"))
+			bool result = false;
+			result = InventoryComponent->AddItem(WorldItem->ItemData, WorldItem->Quantity);
+			if (result)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Actor has tag"));
-				EquipItem(WorldItem->ItemData);
-			}else
-			{
-				InventoryComponent->AddItem(WorldItem->ItemData,WorldItem->Quantity);
-				
-			}
-	
 				WorldItem->Destroy();
+			}
+
 			UE_LOG(LogTemp, Warning, TEXT("Item added"));
-	
 		}
-		
 	}
 	else
 	{
 		UE_LOG(LogTemp, Display, TEXT("No actor hit!"));
 	}
-
 }
 
 void ALanistaCharacter::EquipItem(UItemDefinition* NewItem)
 {
 	if (!NewItem || NewItem->Slot == EEquipmentSlot::None) return;
- 
+
 	// 1. Get the specific component for this slot
 	USkeletalMeshComponent* TargetComponent = nullptr;
 	if (NewItem->Slot == EEquipmentSlot::Chest) TargetComponent = ChestArmorComponent;
-    
+
 	if (TargetComponent)
 	{
 		// 2. Load and Set the Mesh from the Data Asset
 		USkeletalMesh* LoadedMesh = NewItem->EquipmentMesh.LoadSynchronous();
 		TargetComponent->SetSkeletalMesh(LoadedMesh);
- 
+
 		// 3. THE MAGIC STEP: Sync animations with the body
 		// This makes the chestplate move with the character's breathing/running
 		TargetComponent->SetLeaderPoseComponent(GetMesh());
 	}
 }
-
-

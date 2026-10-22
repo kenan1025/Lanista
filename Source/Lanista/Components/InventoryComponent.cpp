@@ -3,6 +3,8 @@
 
 #include "InventoryComponent.h"
 
+#include "Items/WorldItem.h"
+
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
@@ -28,6 +30,7 @@ bool UInventoryComponent::AddItem(UItemDefinition* Item, int32 Amount)
 			{
 				Slot.Quantity +=Amount;
 				OnInventoryUpdated.Broadcast();
+				 
 				return true;
 			}
 		}
@@ -64,6 +67,7 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Slots.SetNum(InventorySize);
+	Armors.SetNum(4);
 	
 }
 
