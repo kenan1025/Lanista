@@ -61,7 +61,7 @@ protected:
 	TArray<FInventorySlot> Slots;
 	
 	/** Stores four armor slots allocated at play start but not used by the current inventory operations. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Equipment")
 	TMap<EEquipmentSlot, TObjectPtr<UItemDefinition>> EquippedArmors;
 
 public:	
