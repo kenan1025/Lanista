@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Items/ItemDefinition.h"
-#include "Items/Fragments/ItemInventoryFragment.h"
 #include "InventoryComponent.generated.h"
+
+enum class EEquipmentSlot : uint8;
 
 USTRUCT(BlueprintType)
 struct FInventorySlot
@@ -50,9 +51,7 @@ public:
 	/** Subtracts the supplied amount from a valid occupied slot, clears nonpositive quantities, and broadcasts an update. */
 	UFUNCTION(BlueprintCallable,Category="Inventory")
 	void RemoveItem(int32 SlotIndex, int32 Amount = 1);
-	/** Retains a legacy fragment reference that AddItem does not use for its per-item fragment lookup. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UItemInventoryFragment* ItemInventoryFragment;
+	
 
 protected:
 	/** Allocates InventorySize inventory slots and four armor slots. */
@@ -62,8 +61,8 @@ protected:
 	TArray<FInventorySlot> Slots;
 	
 	/** Stores four armor slots allocated at play start but not used by the current inventory operations. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
-	TArray<FInventorySlot> Armors;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
+	TMap<EEquipmentSlot, TObjectPtr<UItemDefinition>> EquippedArmors;
 
 public:	
 	/** Forwards the frame update to the base component without additional inventory logic. */

@@ -133,7 +133,7 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Slots.SetNum(InventorySize);
-	Armors.SetNum(4);
+	
 	
 }
 
