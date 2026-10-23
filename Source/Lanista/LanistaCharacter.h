@@ -22,6 +22,7 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+/** Carries the sprint state emitted by sprint start and stop operations outside recovery. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStaminaStateChangedDelegate, bool, bSprinting);
 /**
  *  A basic first person character
@@ -31,11 +32,11 @@ class ALanistaCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Pawn mesh: first person view (arms; seen only by self) */
+	/** References the owner-only first-person mesh attached to the character's main mesh. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* FirstPersonMesh;
 
-	/** First person camera */
+	/** References the control-rotation camera attached to the first-person mesh's head socket. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 	
@@ -44,81 +45,96 @@ class ALanistaCharacter : public ACharacter
 
 protected:
 
-	/** Jump Input Action */
+	/** Defines the input action bound to jump start and jump end. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* JumpAction;
-	/** Sprint Input Action */
+	/** Defines the input action bound to sprint start and sprint end. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* SprintAction;
+	/** Defines the input action bound to dropping from the first occupied inventory slot. */
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* DropItemAction;
 
-	/** Move Input Action */
+	/** Defines the two-axis input action forwarded to character movement. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* MoveAction;
-	/** Crouch Input Action - Assign in Blueprint Details */
+	/** Defines the input action that toggles crouch intent when started. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Actions")
 	UInputAction* CrouchAction;
+	/** Defines the input action that starts the world-item interaction sweep. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Actions")
 	UInputAction* InteractAction;
 
-	/** Look Input Action */
+	/** Defines the two-axis look action forwarded to controller yaw and pitch. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	class UInputAction* LookAction;
 
-	/** Mouse Look Input Action */
+	/** Defines the mouse-look action forwarded to the same handler as LookAction. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	class UInputAction* MouseLookAction;
 	
 public:
 	
+	/** Creates the first-person view and gameplay components and configures collision, camera, and movement defaults. */
 	ALanistaCharacter();
-	// Called when the game starts
+	/** Applies walk speed and binds stamina recovery changes before synchronizing the current recovery speed. */
 	virtual void BeginPlay() override;
 	
+	/** Drains sprint stamina each frame while sprint intent is active and stamina is not recovering. */
 	virtual void Tick(float DeltaTime) override;
-	/** Set up input action bindings */
+	/** Binds Enhanced Input actions for movement, aiming, jumping, sprinting, crouching, interaction, and dropping items. */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 protected:
 
+	/** Selects crouched, recovery, sprint, or normal walk speed when the stamina recovery state is synchronized. */
 	void HandleRecoveryStateChanged(bool bRecovering);
-	/** Toggles crouch on each press. */
+	/** Cancels existing crouch intent or requests crouching when the character is not falling. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void ToggleCrouch(const FInputActionValue& Value);
 
-	/** Called from Input Actions for movement input */
+	/** Extracts the two-axis input value and forwards it to DoMove. */
 	void MoveInput(const FInputActionValue& Value);
 
-	/** Called from Input Actions for looking input */
+	/** Extracts the two-axis input value and forwards it to DoAim. */
 	void LookInput(const FInputActionValue& Value);
 
-	/** Handles aim inputs from either controls or UI interfaces */
+	/** Applies yaw and pitch input when the character has a controller. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoAim(float Yaw, float Pitch);
 
-	/** Handles move inputs from either controls or UI interfaces */
+	/** Applies movement input along the actor's right and forward vectors when a controller exists. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
 
-	/** Handles jump start inputs from either controls or UI interfaces */
+	/** Requests a jump and drains JumpStaminaDrain whenever stamina is not recovering. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpStart();
 
-	/** Handles jump end inputs from either controls or UI interfaces */
+	/** Ends the current jump request through StopJumping. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-	/** Handles Sprint start inputs from either controls or UI interfaces */
+	/** Forwards sprint-start input to Sprint. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintStart();
 
-	/** Handles Sprint end inputs from either controls or UI interfaces */
+	/** Forwards sprint-end input to StopSprint. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoSprintEnd();
 	
-	/** Handles Sprint end inputs from either controls or UI interfaces */
+	/** Forwards interaction input to Interact. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoInteract();
 	
+	/** Sweeps a camera-directed sphere and destroys a hit world item only after its full quantity is accepted by inventory. */
 	void Interact();
+	/** Forwards drop-item input to DropItem. */
+	UFUNCTION(BlueprintCallable, Category="Input")
+	virtual void DoDropItem();
 	
+	/** Requests removal of one item from the first nonempty inventory slot through DropFirstItem. */
+	void DropItem();
+	
+	/** Defines the maximum camera-forward distance of the interaction sphere sweep. */
 	UPROPERTY(EditAnywhere)
 	float MaxInteractDistance = 300.0f;
 	
@@ -129,63 +145,62 @@ protected:
 	
 
 public:
+	/** References the stamina component used for sprint and jump costs and recovery speed changes. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaminaComponent* StaminaComponent;
+	/** References the inventory component used to collect and drop items. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UInventoryComponent* InventoryComponent;
+	/** References the health component that processes owner damage and health notifications. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UHealthComponent* HealthComponent;
+	/** Stores the last blocking interaction hit cast to a world item, which may refer to a destroyed pickup. */
 	UPROPERTY(VisibleAnywhere)
 	AWorldItem* WorldItem;
-	UFUNCTION(BlueprintCallable, Category = "Equipment")
-	void EquipItem(UItemDefinition* NewItem);
- 
-	// References to the components you added in the Blueprint
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
-	TObjectPtr<USkeletalMeshComponent> ChestArmorComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
-	TObjectPtr<USkeletalMeshComponent> HelmetArmorComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
-	TObjectPtr<USkeletalMeshComponent> PantsArmorComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment")
-	TObjectPtr<USkeletalMeshComponent> BootsArmorComponent;
+
+	/** Defines the normal maximum walking speed applied at play start and outside sprint or recovery. */
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed = 300.0f;
-	/** If true, we're sprinting */
+	/** Stores sprint intent, which can remain true during stamina recovery. */
 	bool bSprinting = false;
 	
 	
 	
+	/** Defines stamina drained per second while sprint intent is active outside recovery. */
 	UPROPERTY(EditAnywhere, Category="Sprint")
 	float SprintStaminaDrain = 10.0f;
+	/** Defines stamina drained for each jump-start request accepted outside recovery. */
 	UPROPERTY(EditAnywhere, Category="Jump")
 	float JumpStaminaDrain = 10.0f;
+	/** Defines the maximum walking speed selected for sprinting outside recovery. */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, Units = "cm/s"))
 	float SprintSpeed = 600.0f;
-	/** Walk speed while recovering stamina */
+	/** Defines the maximum walking speed selected during recovery when not crouched. */
 	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 300, Units = "cm/s"))
 	float RecoveringWalkSpeed = 150.0f;
+	/** Retains a Blueprint-writable legacy flag separate from the inherited bIsCrouched state used by C++ movement logic. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crouch")
 	bool IsCrouched;
 	
 	
 	
 	
+	/** Broadcasts sprint start or stop when the corresponding operation runs outside stamina recovery. */
 	FStaminaStateChangedDelegate OnSprintStateChanged;
 	
-	/** Starts sprinting behavior */
+	/** Sets sprint intent unless crouched and applies sprint speed and broadcasts true only outside recovery. */
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void Sprint();
 
-	/** Stops sprinting behavior */
+	/** Clears sprint intent and restores walk speed and broadcasts false only outside recovery. */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void StopSprint();
 
 	
-	/** Returns the first person mesh **/
+	/** Returns the owner-only first-person mesh component. */
 	USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }
 
-	/** Returns first person camera component **/
+	/** Returns the first-person camera component. */
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 	
 

@@ -6,10 +6,8 @@
 #include "UObject/Object.h"
 #include "ItemFragment.generated.h"
 
-/**
- * 
- */
-UCLASS(Abstract, BlueprintType, EditInlineNew, DefaultToInstanced)
+/** Provides the abstract, instanced base type for item data fragments. */
+UCLASS(Blueprintable,Abstract, BlueprintType, EditInlineNew, DefaultToInstanced)
 class LANISTA_API UItemFragment : public UObject
 {
 	GENERATED_BODY()

@@ -15,6 +15,7 @@ class LANISTA_API UArmorStatsFragment : public UItemFragment
 	GENERATED_BODY()
 	
 public:
+	/** Stores the item's configured base armor value without applying it to health automatically. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float BaseArmor = 20.0f;
 };

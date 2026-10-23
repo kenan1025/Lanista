@@ -13,21 +13,22 @@ class LANISTA_API AWorldItem : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+	/** Enables ticking for the world item actor. */
 	AWorldItem();
 
 protected:
-	// Called when the game starts or when spawned
+	/** Forwards play initialization to the base actor without additional item setup. */
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
+	/** Forwards the frame update to the base actor without additional item logic. */
 	virtual void Tick(float DeltaTime) override;
+	/** References the item definition transferred to inventory when this actor is picked up. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "ItemDefinition")
-	UItemDefinition* ItemData;
+	TObjectPtr<UItemDefinition> ItemData;
+	/** Stores the item quantity transferred to inventory during pickup. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "ItemDefinition")
 	int32 Quantity = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "ItemDefinition")
-	FText DisplayName;
+	
 
 };

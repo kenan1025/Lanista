@@ -3,3 +3,18 @@
 
 #include "ItemDefinition.h"
 
+const UItemFragment* UItemDefinition::FindFragmentByClass(TSubclassOf<UItemFragment> FragmentClass)
+{
+	if (FragmentClass)
+	{
+		
+		for (const TObjectPtr<UItemFragment>& Fragment : Fragments)
+		{
+			if (Fragment && Fragment->IsA(FragmentClass))
+			{
+				return Fragment.Get();
+			}
+		}
+	}
+	return  nullptr;
+}
