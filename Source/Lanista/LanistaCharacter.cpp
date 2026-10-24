@@ -127,8 +127,7 @@ void ALanistaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		                                   &ALanistaCharacter::ToggleCrouch);
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this,
 		                                   &ALanistaCharacter::DoInteract);
-		EnhancedInputComponent->BindAction(DropItemAction, ETriggerEvent::Started, this,
-		                                   &ALanistaCharacter::DoDropItem);
+
 	}
 	else
 	{
@@ -279,14 +278,4 @@ void ALanistaCharacter::Interact()
 	{
 		UE_LOG(LogTemp, Display, TEXT("No actor hit!"));
 	}
-}
-
-void ALanistaCharacter::DoDropItem()
-{
-	DropItem();
-}
-
-void ALanistaCharacter::DropItem()
-{
-	InventoryComponent->DropFirstItem();
 }

@@ -43,14 +43,9 @@ public:
 	/** Adds a positive amount to the first eligible stack or empty slot without clamping the resulting stack size. */
 	UFUNCTION(BlueprintCallable,Category="Inventory")
 	bool AddItem(UItemDefinition * Item, int32 Amount =1);
-	/** Validates the slot, amount, owner, and world before removing items without currently spawning a world pickup. */
+	/** Removes only a positive available quantity, clears an exhausted slot, and broadcasts once after success. */
 	UFUNCTION(BlueprintCallable,Category="Inventory")
-	bool DropItem(int32 SlotIndex, int32 Amount);
-	/** Attempts to drop the requested amount from the first nonempty slot and returns that attempt's result. */
-	bool DropFirstItem(int32 Amount = 1);
-	/** Subtracts the supplied amount from a valid occupied slot, clears nonpositive quantities, and broadcasts an update. */
-	UFUNCTION(BlueprintCallable,Category="Inventory")
-	void RemoveItem(int32 SlotIndex, int32 Amount = 1);
+	bool RemoveItem(int32 SlotIndex, int32 Amount = 1);
 	
 
 protected:

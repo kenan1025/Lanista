@@ -51,9 +51,7 @@ protected:
 	/** Defines the input action bound to sprint start and sprint end. */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* SprintAction;
-	/** Defines the input action bound to dropping from the first occupied inventory slot. */
-	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* DropItemAction;
+
 
 	/** Defines the two-axis input action forwarded to character movement. */
 	UPROPERTY(EditAnywhere, Category ="Input")
@@ -82,7 +80,7 @@ public:
 	
 	/** Drains sprint stamina each frame while sprint intent is active and stamina is not recovering. */
 	virtual void Tick(float DeltaTime) override;
-	/** Binds Enhanced Input actions for movement, aiming, jumping, sprinting, crouching, interaction, and dropping items. */
+	/** Binds Enhanced Input actions for movement, aiming, jumping, sprinting, crouching, and interaction. */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 protected:
 
@@ -127,12 +125,7 @@ protected:
 	
 	/** Sweeps a camera-directed sphere and destroys a hit world item only after its full quantity is accepted by inventory. */
 	void Interact();
-	/** Forwards drop-item input to DropItem. */
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoDropItem();
-	
-	/** Requests removal of one item from the first nonempty inventory slot through DropFirstItem. */
-	void DropItem();
+
 	
 	/** Defines the maximum camera-forward distance of the interaction sphere sweep. */
 	UPROPERTY(EditAnywhere)

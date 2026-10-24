@@ -3,8 +3,7 @@
 
 #include "InventoryComponent.h"
 
-#include "Engine/World.h"
-#include "Items/WorldItem.h"
+
 #include "Items/Fragments/ItemInventoryFragment.h"
 
 // Sets default values for this component's properties
@@ -65,66 +64,21 @@ bool UInventoryComponent::AddItem(UItemDefinition* Item, int32 Amount)
 	return false;
 }
 
-bool UInventoryComponent::DropFirstItem(int32 Amount)
-{
-	for (int32 SlotIndex = 0; SlotIndex < Slots.Num(); ++SlotIndex)
-	{
-		if (!Slots[SlotIndex].IsEmpty())
-		{
-			return DropItem(SlotIndex, Amount);
-		}
-	}
-	return false;
-}
-
-bool UInventoryComponent::DropItem(int32 SlotIndex, int32 Amount)
+bool UInventoryComponent::RemoveItem(int32 SlotIndex, int32 Amount)
 {
 	if (!Slots.IsValidIndex(SlotIndex) || Slots[SlotIndex].IsEmpty() ||
-		Amount <= 0 || Amount > Slots[SlotIndex].Quantity || !GetOwner() || !GetWorld())
+		Amount <= 0 || Amount > Slots[SlotIndex].Quantity)
 	{
 		return false;
 	}
 
-	UItemDefinition* Item = Slots[SlotIndex].ItemDef;
-	// UClass* WorldItemClass = Item->WorldItem.LoadSynchronous();
-	// if (!WorldItemClass)
-	// {
-	// 	return false;
-	// }
-
-	const FVector Location = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 150.0f;
-	const FTransform Transform(FRotator::ZeroRotator, Location);
-	// AWorldItem* DroppedItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, Transform,
-	// 	nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-	// if (!DroppedItem)
-	// {
-	// 	return false;
-	// }
-
-	// Construction scripts and BeginPlay must see the dropped stack, not Blueprint defaults.
-	// DroppedItem->ItemData = Item;
-	// DroppedItem->Quantity = Amount;
-	// DroppedItem->FinishSpawning(Transform, false, nullptr, ESpawnActorScaleMethod::MultiplyWithRoot);
-	// if (!IsValid(DroppedItem))
-	// {
-	// 	return false;
-	// }
-
-	RemoveItem(SlotIndex, Amount);
-	return true;
-}
-
-void UInventoryComponent::RemoveItem(int32 SlotIndex, int32 Amount)
-{
-	if (Slots.IsValidIndex(SlotIndex) && !Slots[SlotIndex].IsEmpty())
+	Slots[SlotIndex].Quantity -= Amount;
+	if (Slots[SlotIndex].Quantity == 0)
 	{
-		Slots[SlotIndex].Quantity -= Amount;
-		if (Slots[SlotIndex].Quantity <= 0)
-		{
-			Slots[SlotIndex] = FInventorySlot();
-		}
-		OnInventoryUpdated.Broadcast();
+		Slots[SlotIndex] = FInventorySlot();
 	}
+	OnInventoryUpdated.Broadcast();
+	return true;
 }
 
 // Called when the game starts
